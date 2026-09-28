@@ -1,0 +1,41 @@
+# Secrets — keys live in .env (see .env.example)
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Runtime data: SQLite DB (user accounts + password hashes), card images,
+# and the auto-generated JWT signing key (backend/data/secret.key)
+backend/data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+backend/.venv/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node / frontend build output
+frontend/node_modules/
+node_modules/
+frontend/dist/
+*.tsbuildinfo
+
+# Local tool settings
+.claude/settings.local.json
+.vscode/
+.idea/
+
+# Diagram tooling sidecars (screenshots + receipts from archify visual-check)
+docs/*.visual-check.*
+
+# OS / logs
+.DS_Store
+Thumbs.db
+*.log

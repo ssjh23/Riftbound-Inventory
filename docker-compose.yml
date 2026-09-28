@@ -1,0 +1,78 @@
+# Development stack — hot reload, bind-mounted source and data.
+# Works on Docker Desktop for macOS and Windows (use relative paths only).
+#
+#   docker compose up --build
+#   open http://localhost:5173
+#
+# Production-style single-port stack:
+#
+#   docker compose --profile prod up --build
+#   open http://localhost:8080
+
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/data:/data
+      - ./backend/app:/app/app
+    environment:
+      RIFTBOUND_DATA_DIR: /data
+      # Optional keys come from ./.env (gitignored) — copy .env.example to start.
+      RIFTBOUND_TOPDECK_KEY: ${RIFTBOUND_TOPDECK_KEY:-}
+      RIFTBOUND_PRICE_API_KEY: ${RIFTBOUND_PRICE_API_KEY:-}
+      RIFTBOUND_CORS_ORIGINS: >-
+        http://localhost:5173,
+        http://127.0.0.1:5173,
+        http://localhost:8080,
+        http://127.0.0.1:8080
+    command: >
+      uvicorn app.main:app
+      --host 0.0.0.0
+      --port 8000
+      --reload
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/openapi.json')",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - ./frontend/index.html:/app/index.html
+      - ./frontend/vite.config.ts:/app/vite.config.ts
+      - ./frontend/tsconfig.json:/app/tsconfig.json
+    environment:
+      VITE_PROXY_TARGET: http://backend:8000
+      # File watching inside Docker Desktop on macOS/Windows bind mounts.
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  frontend-prod:
+    profiles: ["prod"]
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    ports:
+      - "8080:80"
+    depends_on:
+      backend:
+        condition: service_healthy
