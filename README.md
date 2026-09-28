@@ -6,6 +6,20 @@ collection limits, and see what's still missing. Cards are entered manually
 from the browsable card list. Multiple people can each keep an account on the
 same instance, browse each other's collections, and trade cards.
 
+## Hello Summoner!
+
+I built this as a locally hosted online Riftbound inventory for me to track my
+bulk and personal collection. It was originally used as just a way to track
+what cards I still needed to collect, but I had more ideas to use it for
+storing my bulk, what cards I have and am missing to build my decks, and what
+cards I can share with my friends who want to also play the game!
+
+If you are a Riftbounder in Singapore, maybe I will see you at one of my Nexus
+Nights :)
+
+Sincerely,
+a dirty Pack Ezreal player
+
 ```
 backend/    Python 3.10+ · FastAPI · SQLite
 frontend/   TypeScript · React · Vite
